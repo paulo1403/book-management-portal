@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import PrivateRoute from "./components/PrivateRoute";
-import "./App.css";
+import BookPage from "./pages/BookPage";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
           path="/books" 
           element={
             <PrivateRoute>
-              {/* <BookPage /> */}
+              <BookPage />
             </PrivateRoute>
           } 
         />

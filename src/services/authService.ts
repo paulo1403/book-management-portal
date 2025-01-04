@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/authStore';
 const API_URL = 'http://localhost:8000/api'; // Ajusta esto a tu URL de Django
 
 export interface LoginCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 

@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
+import { FormError } from "../components/FormError";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,22 +11,24 @@ const LoginPage: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      username: "",
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email format").required("Required"),
-      password: Yup.string().required("Required"),
+      username: Yup.string()
+        .min(3, "El nombre de usuario debe tener al menos 3 caracteres")
+        .required("El nombre de usuario es obligatorio"),
+      password: Yup.string().required("La contraseña es obligatoria"),
     }),
     onSubmit: async (values) => {
       try {
         await authService.login({
-          email: values.email,
+          username: values.username,
           password: values.password,
         });
         navigate("/books");
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : "Ha ocurrido un error");
       }
     },
   });
@@ -33,34 +36,34 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Login
+        <h2 className="text-3xl text-center font-extrabold text-gray-900">
+          Iniciar sesión
         </h2>
+
         <form onSubmit={formik.handleSubmit} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email
+              <label htmlFor="username" className="sr-only">
+                Nombre de usuario
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="username"
+                name="username"
+                type="text"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.email}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                value={formik.values.username}
+                className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Nombre de usuario"
               />
-              {formik.touched.email && formik.errors.email && (
-                <div className="text-red-500 text-sm mt-1">
-                  {formik.errors.email}
-                </div>
+              {formik.touched.username && formik.errors.username && (
+                <FormError message={formik.errors.username} />
               )}
             </div>
+
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Contraseña
               </label>
               <input
                 id="password"
@@ -69,13 +72,11 @@ const LoginPage: React.FC = () => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.password}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none rounded-b-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Contraseña"
               />
               {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-sm mt-1">
-                  {formik.errors.password}
-                </div>
+                <FormError message={formik.errors.password} />
               )}
             </div>
           </div>
@@ -85,21 +86,19 @@ const LoginPage: React.FC = () => {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Login
+              Iniciar sesión
             </button>
           </div>
-          {error && (
-            <div className="text-red-500 text-sm text-center mt-2">
-              {error}
-            </div>
-          )}
+
+          {error && <FormError message={error} />}
+
           <div className="text-sm text-center mt-4">
-            <span className="text-gray-600">Don't have an account? </span>
+            <span className="text-gray-600">¿No tienes una cuenta? </span>
             <a
               href="/register"
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
-              Register here
+              Regístrate aquí
             </a>
           </div>
         </form>
