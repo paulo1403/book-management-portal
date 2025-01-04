@@ -4,6 +4,8 @@ import RegisterPage from "./pages/RegisterPage";
 import PrivateRoute from "./components/PrivateRoute";
 import BookPage from "./pages/BookPage";
 import AuthInitializer from "./components/AuthInitializer";
+import BookDetail from './components/BookDetail';
+import CreateBook from './pages/CreateBook';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/books/create" element={<CreateBook />} />
+          <Route path="/books/:id" element={<BookDetail />} />
         </Routes>
       </Router>
     </AuthInitializer>

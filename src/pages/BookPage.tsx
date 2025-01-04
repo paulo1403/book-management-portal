@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import bookService, { Book } from "../services/bookService";
+import { Link } from 'react-router-dom';
 
 const BookPage = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -30,7 +31,15 @@ const BookPage = () => {
     <div>
       <Header />
       <div className="p-6 max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Books</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Books</h1>
+          <Link
+            to="/books/create"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add New Book
+          </Link>
+        </div>
         {loading && <p className="text-gray-600">Cargando libros...</p>}
         {error && <p className="text-red-600">{error}</p>}
         {!loading && !error && books.length === 0 && (
@@ -50,7 +59,11 @@ const BookPage = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {books?.map((book) => (
                 <tr key={book._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">{book.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Link to={`/books/${book._id}`} className="text-blue-600 hover:text-blue-800">
+                      {book.title}
+                    </Link>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">{book.author}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{new Date(book.published_date).toLocaleDateString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{book.genre}</td>
