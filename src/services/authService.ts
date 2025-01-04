@@ -4,11 +4,6 @@ import { API_BASE_URL } from "../constants/config";
 
 const API_URL = API_BASE_URL;
 
-interface LoginCredentials {
-  username: string;
-  password: string;
-}
-
 interface RegisterRequest {
   username: string;
   email: string;
@@ -50,7 +45,7 @@ class AuthService {
       return !!response.data;
     } catch (error) {
       console.error("Registration error:", error);
-      throw error; // Reenviar el error para manejarlo en el componente
+      throw error;
     }
   }
 

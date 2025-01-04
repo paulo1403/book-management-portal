@@ -4,12 +4,12 @@ import RegisterPage from "./pages/RegisterPage";
 import PrivateRoute from "./components/PrivateRoute";
 import BookPage from "./pages/BookPage";
 import AuthInitializer from "./components/AuthInitializer";
-import BookDetail from './components/BookDetail';
-import CreateBook from './pages/CreateBook';
-import EditBook from './pages/EditBook';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import BookStats from './pages/BookStats';
+import BookDetail from "./components/BookDetail";
+import CreateBook from "./pages/CreateBook";
+import EditBook from "./pages/EditBook";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import BookStats from "./pages/BookStats";
 
 function App() {
   return (
@@ -26,14 +26,46 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/books/create" element={<CreateBook />} />
-          <Route path="/books/:id" element={<BookDetail />} />
-          <Route path="/books/edit/:id" element={
-            <PrivateRoute>
-              <EditBook />
-            </PrivateRoute>
-          } />
-          <Route path="/books/stats" element={<BookStats />} />
+          <Route
+            path="/books/create"
+            element={
+              <PrivateRoute>
+                <CreateBook />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/books/:id"
+            element={
+              <PrivateRoute>
+                <BookDetail />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/books/edit/:id"
+            element={
+              <PrivateRoute>
+                <EditBook />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/books/stats"
+            element={
+              <PrivateRoute>
+                <BookStats />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <BookPage />
+              </PrivateRoute>
+            }
+          />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
       </Router>
