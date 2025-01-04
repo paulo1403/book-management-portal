@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig";
 
-export interface Book {
+interface Book {
   id: string;
   title: string;
   author: string;
@@ -19,6 +19,14 @@ interface CreateBookDTO {
   genre: string;
   price: number;
   description?: string;
+}
+
+interface IBookStats {
+  year: number;
+  average_price: number;
+  minimum_price: number;
+  maximum_price: number;
+  total_books: number;
 }
 
 class BookService {
@@ -78,6 +86,18 @@ class BookService {
       return false;
     }
   }
+
+  async getBookStatsByYear(year: number): Promise<IBookStats | null> {
+    try {
+      const response = await axiosInstance.get(`/books/stats/year/${year}/`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching book stats:', error);
+      return null;
+    }
+  }
 }
 
-export default new BookService();
+const bookService = new BookService();
+export type { Book, IBookStats };
+export { bookService as default };

@@ -9,6 +9,7 @@ import CreateBook from './pages/CreateBook';
 import EditBook from './pages/EditBook';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import BookStats from './pages/BookStats';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <EditBook />
             </PrivateRoute>
           } />
+          <Route path="/books/stats" element={<BookStats />} />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
       </Router>
