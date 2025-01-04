@@ -1,20 +1,11 @@
-import axios from "./axiosConfig";
-import { useAuthStore } from "../store/authStore";
+import axios from "axios";
+import useAuthStore from "../store/authStore";
 
-const API_URL = "http://localhost:8000/api"; // Ajusta esto a tu URL de Django
+const API_URL = "http://localhost:8000/api";
 
-export interface LoginCredentials {
+interface LoginCredentials {
   username: string;
   password: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  };
 }
 
 interface RegisterRequest {
@@ -25,55 +16,87 @@ interface RegisterRequest {
 }
 
 class AuthService {
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  private setupAxiosConfig(token: string | null) {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }
+
+  private async setAuthToken(token: string) {
+    useAuthStore.getState().setToken(token);
+    this.setupAxiosConfig(token);
+    // Asegúrate de que esto se ejecute después del login
+    await this.fetchUserProfile();
+  }
+
+  async login(credentials: LoginCredentials): Promise<void> {
     try {
+      this.setupAxiosConfig(null);
+
       const response = await axios.post(`${API_URL}/token/`, credentials);
       if (response.data.token) {
-        useAuthStore
-          .getState()
-          .setAuth(response.data.token, response.data.user);
+        await this.setAuthToken(response.data.token);
+        // Verifica que el perfil se obtiene después del login
+        console.log('Usuario autenticado:', useAuthStore.getState().user);
       }
-      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  async register(data: RegisterRequest): Promise<any> {
+  async register(data: RegisterRequest): Promise<void> {
     try {
       const response = await axios.post(`${API_URL}/register/`, data);
-      if (response.data.token) {
-        useAuthStore
-          .getState()
-          .setAuth(response.data.token, response.data.user);
+      if (response.data.id) {
+        await this.login({
+          username: data.username,
+          password: data.password,
+        });
       }
-      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  logout(): void {
-    useAuthStore.getState().clearAuth();
+  async fetchUserProfile(): Promise<void> {
+    try {
+      const response = await axios.get(`${API_URL}/user/profile/`);
+      if (response.data) {
+        useAuthStore.getState().setUser(response.data);
+      }
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 
-  getCurrentUser() {
-    return useAuthStore.getState().user;
-  }
+  async logout(): Promise<void> {
+    try {
+      const token = useAuthStore.getState().token;
+      this.setupAxiosConfig(token);
 
-  getToken() {
-    return useAuthStore.getState().token;
+      await axios.post(`${API_URL}/user/logout/`);
+
+      useAuthStore.getState().setUser(null);
+      useAuthStore.getState().setToken(null);
+      this.setupAxiosConfig(null);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   }
 
   private handleError(error: any): Error {
     if (error.response) {
-      // El servidor respondió con un estado de error
-      throw new Error(error.response.data.message || "An error occurred");
+      const message =
+        error.response.data.message ||
+        error.response.data.detail ||
+        Object.values(error.response.data)[0] ||
+        "An error occurred";
+      throw new Error(typeof message === "string" ? message : message[0]);
     } else if (error.request) {
-      // La petición fue hecha pero no se recibió respuesta
       throw new Error("No response from server");
     } else {
-      // Algo sucedió al configurar la petición
       throw new Error("Error setting up request");
     }
   }

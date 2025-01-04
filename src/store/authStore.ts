@@ -1,31 +1,82 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 interface User {
   id: number;
-  name: string;
+  username: string;
   email: string;
+  date_joined: string;
 }
 
-interface AuthState {
-  token: string | null;
+interface AuthStore {
   user: User | null;
-  setAuth: (token: string, user: User) => void;
-  clearAuth: () => void;
+  token: string | null;
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
+  logout: () => Promise<void>;
+  fetchUserProfile: () => Promise<void>;
   isAuthenticated: () => boolean;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      token: null,
-      user: null,
-      setAuth: (token, user) => set({ token, user }),
-      clearAuth: () => set({ token: null, user: null }),
-      isAuthenticated: () => !!get().token,
-    }),
-    {
-      name: 'auth-storage',
+const useAuthStore = create<AuthStore>((set, get) => ({
+  user: null,
+  token: localStorage.getItem('token'),
+  setUser: (user) => set({ user }),
+  setToken: (token) => {
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
     }
-  )
-);
+    set({ token });
+  },
+  logout: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('http://localhost:8000/api/user/logout/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${token}`
+          }
+        });
+      }
+      localStorage.removeItem('token');
+      set({ user: null, token: null });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Asegurarse de limpiar el estado incluso si hay error
+      localStorage.removeItem('token');
+      set({ user: null, token: null });
+    }
+  },
+  fetchUserProfile: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('http://localhost:8000/api/user/profile/', {
+        headers: {
+          'Authorization': `Token ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const userData = await response.json();
+        set({ user: userData });
+      } else {
+        throw new Error('Failed to fetch user profile');
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      set({ user: null, token: null });
+      localStorage.removeItem('token');
+    }
+  },
+  isAuthenticated: () => {
+    const token = localStorage.getItem('token');
+    const user = get().user;
+    return !!token && !!user;
+  }
+}));
+
+export default useAuthStore;
