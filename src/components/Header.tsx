@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import useAuthStore from "../store/authStore";
 import { Link } from "react-router-dom";
+import { AiOutlineBarChart } from "react-icons/ai";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -20,8 +21,9 @@ const Header = () => {
           <nav className="space-x-4">
             <Link
               to="/books/stats"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              className="flex items-center text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
             >
+              <AiOutlineBarChart className="mr-2" />
               Estadísticas
             </Link>
           </nav>
