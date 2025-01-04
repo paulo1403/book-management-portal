@@ -24,12 +24,7 @@ interface CreateBookDTO {
 class BookService {
   async getBooks(): Promise<Book[]> {
     try {
-      console.log(
-        "Fetching books from:",
-        `${axiosInstance.defaults.baseURL}/books/`
-      );
       const response = await axiosInstance.get("/books/");
-      console.log("Books response:", response.data);
       if (!Array.isArray(response.data)) {
         console.error("La respuesta no es un array:", response.data);
         return [];
