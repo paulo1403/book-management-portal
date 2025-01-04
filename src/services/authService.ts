@@ -27,7 +27,6 @@ class AuthService {
   private async setAuthToken(token: string) {
     useAuthStore.getState().setToken(token);
     this.setupAxiosConfig(token);
-    // Asegúrate de que esto se ejecute después del login
     await this.fetchUserProfile();
   }
 
@@ -38,8 +37,6 @@ class AuthService {
       const response = await axios.post(`${API_URL}/token/`, credentials);
       if (response.data.token) {
         await this.setAuthToken(response.data.token);
-        // Verifica que el perfil se obtiene después del login
-        console.log('Usuario autenticado:', useAuthStore.getState().user);
       }
     } catch (error) {
       throw this.handleError(error);

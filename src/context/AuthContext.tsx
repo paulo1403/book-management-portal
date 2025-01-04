@@ -20,10 +20,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Obtener el token del localStorage
     const token = localStorage.getItem("token");
     if (token) {
-      // Hacer una petición al backend para obtener los datos del usuario
       fetch("http://localhost:8000/api/user/", {
         headers: {
           Authorization: `Token ${token}`,

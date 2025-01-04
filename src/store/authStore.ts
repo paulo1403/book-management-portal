@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface User {
   id: number;
@@ -19,64 +19,63 @@ interface AuthStore {
 
 const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
-  token: localStorage.getItem('token'),
+  token: localStorage.getItem("token"),
   setUser: (user) => set({ user }),
   setToken: (token) => {
     if (token) {
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
     } else {
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     }
     set({ token });
   },
   logout: async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
-        await fetch('http://localhost:8000/api/user/logout/', {
-          method: 'POST',
+        await fetch("http://localhost:8000/api/user/logout/", {
+          method: "POST",
           headers: {
-            'Authorization': `Token ${token}`
-          }
+            Authorization: `Token ${token}`,
+          },
         });
       }
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       set({ user: null, token: null });
     } catch (error) {
-      console.error('Error during logout:', error);
-      // Asegurarse de limpiar el estado incluso si hay error
-      localStorage.removeItem('token');
+      console.error("Error during logout:", error);
+      localStorage.removeItem("token");
       set({ user: null, token: null });
     }
   },
   fetchUserProfile: async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return;
 
-      const response = await fetch('http://localhost:8000/api/user/profile/', {
+      const response = await fetch("http://localhost:8000/api/user/profile/", {
         headers: {
-          'Authorization': `Token ${token}`
-        }
+          Authorization: `Token ${token}`,
+        },
       });
-      
+
       if (response.ok) {
         const userData = await response.json();
         set({ user: userData });
       } else {
-        throw new Error('Failed to fetch user profile');
+        throw new Error("Failed to fetch user profile");
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error("Error fetching user profile:", error);
       set({ user: null, token: null });
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     }
   },
   isAuthenticated: () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const user = get().user;
     return !!token && !!user;
-  }
+  },
 }));
 
 export default useAuthStore;
