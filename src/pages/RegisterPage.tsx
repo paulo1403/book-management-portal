@@ -15,15 +15,15 @@ const RegisterPage: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string()
-        .min(2, "El nombre debe tener al menos 2 caracteres")
-        .required("El nombre es obligatorio"),
+      username: Yup.string()
+        .min(2, "El nombre de usuario debe tener al menos 2 caracteres")
+        .required("El nombre de usuario es obligatorio"),
       email: Yup.string()
         .email("Formato de correo electrónico inválido")
         .required("El correo electrónico es obligatorio"),
@@ -48,9 +48,10 @@ const RegisterPage: React.FC = () => {
 
       try {
         await authService.register({
-          name: values.name,
+          username: values.username,
           email: values.email,
           password: values.password,
+          password_confirmation: values.confirmPassword,
         });
         navigate("/login");
       } catch (err) {
@@ -87,21 +88,21 @@ const RegisterPage: React.FC = () => {
         <div className="w-16"></div>
         <form onSubmit={formik.handleSubmit} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm -space-y-px">
-            <label htmlFor="name" className="sr-only">
-              Nombre
+            <label htmlFor="username" className="sr-only">
+              Nombre de usuario
             </label>
             <input
-              id="name"
-              name="name"
+              id="username"
+              name="username"
               type="text"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.name}
+              value={formik.values.username}
               className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Nombre completo"
+              placeholder="Nombre de usuario"
             />
-            {formik.touched.name && formik.errors.name && (
-              <FormError message={formik.errors.name} />
+            {formik.touched.username && formik.errors.username && (
+              <FormError message={formik.errors.username} />
             )}
 
             <label htmlFor="email" className="sr-only">

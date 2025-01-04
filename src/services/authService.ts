@@ -23,6 +23,13 @@ export interface AuthResponse {
   };
 }
 
+interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
@@ -36,9 +43,9 @@ class AuthService {
     }
   }
 
-  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
+  async register(data: RegisterRequest): Promise<any> {
     try {
-      const response = await axios.post(`${API_URL}/auth/register/`, credentials);
+      const response = await axios.post(`${API_URL}/auth/register/`, data);
       if (response.data.token) {
         useAuthStore.getState().setAuth(response.data.token, response.data.user);
       }
