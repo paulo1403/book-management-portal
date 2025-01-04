@@ -6,6 +6,7 @@ import BookPage from "./pages/BookPage";
 import AuthInitializer from "./components/AuthInitializer";
 import BookDetail from './components/BookDetail';
 import CreateBook from './pages/CreateBook';
+import EditBook from './pages/EditBook';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,6 +27,11 @@ function App() {
           />
           <Route path="/books/create" element={<CreateBook />} />
           <Route path="/books/:id" element={<BookDetail />} />
+          <Route path="/books/edit/:id" element={
+            <PrivateRoute>
+              <EditBook />
+            </PrivateRoute>
+          } />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
       </Router>

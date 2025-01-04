@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosConfig";
 
 export interface Book {
-  id: string;  // Cambiado de _id a id
+  id: string;
   title: string;
   author: string;
   published_date: string;
@@ -24,9 +24,12 @@ interface CreateBookDTO {
 class BookService {
   async getBooks(): Promise<Book[]> {
     try {
-      console.log('Fetching books from:', `${axiosInstance.defaults.baseURL}/books/`);
+      console.log(
+        "Fetching books from:",
+        `${axiosInstance.defaults.baseURL}/books/`
+      );
       const response = await axiosInstance.get("/books/");
-      console.log('Books response:', response.data);
+      console.log("Books response:", response.data);
       if (!Array.isArray(response.data)) {
         console.error("La respuesta no es un array:", response.data);
         return [];
@@ -58,7 +61,10 @@ class BookService {
     }
   }
 
-  async updateBook(id: string, book: Partial<CreateBookDTO>): Promise<Book | null> {
+  async updateBook(
+    id: string,
+    book: Partial<CreateBookDTO>
+  ): Promise<Book | null> {
     try {
       const response = await axiosInstance.put(`/books/${id}/`, book);
       return response.data;
