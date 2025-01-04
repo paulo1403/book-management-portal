@@ -1,7 +1,8 @@
 import axios from "axios";
 import useAuthStore from "../store/authStore";
+import { API_BASE_URL } from "../constants/config";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = API_BASE_URL;
 
 interface LoginCredentials {
   username: string;
@@ -37,6 +38,7 @@ class AuthService {
       const response = await axios.post(`${API_URL}/token/`, credentials);
       if (response.data.token) {
         await this.setAuthToken(response.data.token);
+        console.log('Login successful, token:', response.data.token);
       }
     } catch (error) {
       throw this.handleError(error);

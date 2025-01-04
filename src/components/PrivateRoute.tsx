@@ -1,15 +1,31 @@
 import { Navigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
 }
 
 const PrivateRoute = ({ children }: PropsWithChildren<PrivateRouteProps>) => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
+  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, token, fetchUserProfile } = useAuthStore();
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+  useEffect(() => {
+    const initAuth = async () => {
+      if (token && !isAuthenticated()) {
+        await fetchUserProfile();
+      }
+      setIsLoading(false);
+    };
+
+    initAuth();
+  }, [token]);
+
+  if (isLoading) {
+    return <div>Cargando...</div>; // Puedes crear un componente de loading más elaborado
+  }
+
+  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;
