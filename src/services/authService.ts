@@ -16,6 +16,11 @@ interface RegisterRequest {
   password_confirmation: string;
 }
 
+interface LoginRequest {
+  username: string;
+  password: string;
+}
+
 class AuthService {
   private setupAxiosConfig(token: string | null) {
     if (token) {
@@ -25,37 +30,27 @@ class AuthService {
     }
   }
 
-  private async setAuthToken(token: string) {
-    useAuthStore.getState().setToken(token);
-    this.setupAxiosConfig(token);
-    await this.fetchUserProfile();
-  }
-
-  async login(credentials: LoginCredentials): Promise<void> {
+  async login(credentials: LoginRequest): Promise<boolean> {
     try {
-      this.setupAxiosConfig(null);
-
       const response = await axios.post(`${API_URL}/token/`, credentials);
       if (response.data.token) {
-        await this.setAuthToken(response.data.token);
-        console.log('Login successful, token:', response.data.token);
+        useAuthStore.getState().setToken(response.data.token);
+        return true;
       }
+      return false;
     } catch (error) {
-      throw this.handleError(error);
+      console.error("Login error:", error);
+      return false;
     }
   }
 
-  async register(data: RegisterRequest): Promise<void> {
+  async register(userData: RegisterRequest): Promise<boolean> {
     try {
-      const response = await axios.post(`${API_URL}/register/`, data);
-      if (response.data.id) {
-        await this.login({
-          username: data.username,
-          password: data.password,
-        });
-      }
+      const response = await axios.post(`${API_URL}/register/`, userData);
+      return !!response.data;
     } catch (error) {
-      throw this.handleError(error);
+      console.error("Registration error:", error);
+      throw error; // Reenviar el error para manejarlo en el componente
     }
   }
 

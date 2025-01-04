@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import bookService, { Book } from '../services/bookService';
+import { toast } from 'react-toastify';
 
 const BookDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +24,10 @@ const BookDetail = () => {
     if (id && window.confirm('¿Estás seguro de que quieres eliminar este libro?')) {
       const success = await bookService.deleteBook(id);
       if (success) {
+        toast.success('Libro eliminado exitosamente');
         navigate('/books');
+      } else {
+        toast.error('Error al eliminar el libro');
       }
     }
   };

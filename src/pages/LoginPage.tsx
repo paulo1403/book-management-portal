@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import { FormError } from "../components/FormError";
+import { toast } from 'react-toastify';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,13 +23,19 @@ const LoginPage: React.FC = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await authService.login({
+        const success = await authService.login({
           username: values.username,
-          password: values.password,
+          password: values.password
         });
-        navigate("/books");
+        if (success) {
+          toast.success('¡Inicio de sesión exitoso!');
+          navigate("/books");
+        } else {
+          toast.error('Credenciales inválidas');
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Ha ocurrido un error");
+        toast.error('Error al iniciar sesión');
+        console.error('Login error:', err);
       }
     },
   });

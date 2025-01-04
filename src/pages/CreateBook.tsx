@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import BookForm from '../components/BookForm';
 import bookService from '../services/bookService';
 import Header from '../components/Header';
@@ -13,10 +14,17 @@ const CreateBook = () => {
     try {
       const result = await bookService.createBook(values);
       if (result) {
+        toast.success('¡Libro creado exitosamente!', {
+          position: "top-right",
+          autoClose: 3000,
+        });
         navigate('/books');
+      } else {
+        toast.error('Error al crear el libro');
       }
     } catch (error) {
       console.error('Error creating book:', error);
+      toast.error('Error al crear el libro');
     } finally {
       setIsLoading(false);
     }

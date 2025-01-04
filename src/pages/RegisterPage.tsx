@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import { FormError } from "../components/FormError";
+import { toast } from 'react-toastify';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,15 +48,25 @@ const RegisterPage: React.FC = () => {
       }
 
       try {
-        await authService.register({
+        const success = await authService.register({
           username: values.username,
           email: values.email,
           password: values.password,
           password_confirmation: values.confirmPassword,
         });
-        navigate("/login");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Ha ocurrido un error");
+        if (success) {
+          toast.success('¡Registro exitoso! Por favor inicia sesión');
+          navigate('/login');
+        } else {
+          toast.error('Error al registrar usuario');
+        }
+      } catch (error: any) {
+        if (error.response?.data?.email) {
+          toast.error('El email ya está registrado');
+        } else {
+          toast.error('Error al crear la cuenta');
+        }
+        console.error('Registration error:', error);
       }
     },
   });
