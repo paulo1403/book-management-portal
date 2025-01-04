@@ -1,6 +1,6 @@
-import { Navigate } from 'react-router-dom';
-import useAuthStore from '../store/authStore';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { Navigate } from "react-router-dom";
+import useAuthStore from "../store/authStore";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ const PrivateRoute = ({ children }: PropsWithChildren<PrivateRouteProps>) => {
   }, [token]);
 
   if (isLoading) {
-    return <div>Cargando...</div>; // Puedes crear un componente de loading más elaborado
+    return <div>Cargando...</div>;
   }
 
   return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
