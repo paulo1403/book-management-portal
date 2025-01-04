@@ -32,12 +32,12 @@ const BookPage = () => {
       <Header />
       <div className="p-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Books</h1>
+          <h1 className="text-2xl font-bold">Libros</h1>
           <Link
             to="/books/create"
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Add New Book
+            Agregar Nuevo Libro
           </Link>
         </div>
         {loading && <p className="text-gray-600">Cargando libros...</p>}
@@ -49,16 +49,16 @@ const BookPage = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Published</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Genre</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Título</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Autor</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Publicado</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Género</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {books?.map((book) => (
-                <tr key={book._id} className="hover:bg-gray-50">
+                <tr key={book._id || `book-${book.title}-${book.author}`} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link to={`/books/${book._id}`} className="text-blue-600 hover:text-blue-800">
                       {book.title}
