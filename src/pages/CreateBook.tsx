@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import useAuthStore from "../store/authStore";
 import BookForm from "../components/BookForm";
 import bookService from "../services/bookService";
 import Header from "../components/Header";
 
 const CreateBook = () => {
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.token !== null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (values: any) => {
     setIsLoading(true);

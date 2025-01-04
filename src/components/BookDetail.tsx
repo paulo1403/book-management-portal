@@ -1,20 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import bookService, { Book } from '../services/bookService';
-import { toast } from 'react-toastify';
-import Header from '../components/Header';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/authStore";
+import bookService, { Book } from "../services/bookService";
+import { toast } from "react-toastify";
+import Header from "../components/Header";
 
 const BookDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.token !== null);
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
     const fetchBook = async () => {
       if (!id) {
-        setError('ID del libro no proporcionado');
+        setError("ID del libro no proporcionado");
         setLoading(false);
         return;
       }
@@ -24,58 +31,65 @@ const BookDetail = () => {
         if (data) {
           setBook(data);
         } else {
-          setError('Libro no encontrado');
+          setError("Libro no encontrado");
         }
       } catch (err) {
-        console.error('Error fetching book:', err);
-        setError('Error al cargar el libro');
+        console.error("Error fetching book:", err);
+        setError("Error al cargar el libro");
       } finally {
         setLoading(false);
       }
     };
 
     fetchBook();
-  }, [id]);
+  }, [id, navigate, isAuthenticated]);
 
   const handleDelete = async () => {
-    if (id && window.confirm('¿Estás seguro de que quieres eliminar este libro?')) {
+    if (
+      id &&
+      window.confirm("¿Estás seguro de que quieres eliminar este libro?")
+    ) {
       const success = await bookService.deleteBook(id);
       if (success) {
-        toast.success('Libro eliminado exitosamente');
-        navigate('/books');
+        toast.success("Libro eliminado exitosamente");
+        navigate("/books");
       } else {
-        toast.error('Error al eliminar el libro');
+        toast.error("Error al eliminar el libro");
       }
     }
   };
 
-  if (loading) return (
-    <div>
-      <Header />
-      <div className="max-w-2xl mx-auto p-6">
-        <p className="text-center text-gray-600">Cargando...</p>
+  if (loading)
+    return (
+      <div>
+        <Header />
+        <div className="max-w-2xl mx-auto p-6">
+          <p className="text-center text-gray-600">Cargando...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
-  if (error || !book) return (
-    <div>
-      <Header />
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="bg-white shadow-md rounded p-6">
-          <p className="text-red-600 text-center">{error || 'Libro no encontrado'}</p>
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => navigate('/books')}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-            >
-              Volver a la lista
-            </button>
+  if (error || !book)
+    return (
+      <div>
+        <Header />
+        <div className="max-w-2xl mx-auto p-6">
+          <div className="bg-white shadow-md rounded p-6">
+            <p className="text-red-600 text-center">
+              {error || "Libro no encontrado"}
+            </p>
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => navigate("/books")}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+              >
+                Volver a la lista
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 
   return (
     <div>
@@ -84,7 +98,7 @@ const BookDetail = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">{book.title}</h1>
           <button
-            onClick={() => navigate('/books')}
+            onClick={() => navigate("/books")}
             className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
           >
             Volver a la lista

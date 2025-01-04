@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import useAuthStore from "../store/authStore";
 import BookForm from "../components/BookForm";
 import bookService, { Book } from "../services/bookService";
 import Header from "../components/Header";
@@ -8,10 +9,16 @@ import Header from "../components/Header";
 const EditBook = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.token !== null);
   const [isLoading, setIsLoading] = useState(false);
   const [book, setBook] = useState<Book | null>(null);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
     const fetchBook = async () => {
       if (!id) return;
       try {
@@ -29,7 +36,7 @@ const EditBook = () => {
     };
 
     fetchBook();
-  }, [id, navigate]);
+  }, [id, navigate, isAuthenticated]);
 
   const handleSubmit = async (values: any) => {
     if (!id) return;
