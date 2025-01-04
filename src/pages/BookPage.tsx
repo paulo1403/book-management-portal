@@ -11,11 +11,13 @@ const BookPage = () => {
     const fetchBooks = async () => {
       try {
         const data = await bookService.getBooks();
-        setBooks(data);
+        console.log('Datos recibidos:', data); // Para debuggear
+        setBooks(Array.isArray(data) ? data : []);
         setError(null);
       } catch (err) {
         setError('Error al cargar los libros');
         console.error(err);
+        setBooks([]); // Asegurar que books siempre sea un array
       } finally {
         setLoading(false);
       }
@@ -31,7 +33,10 @@ const BookPage = () => {
         <h1 className="text-2xl font-bold mb-6">Books</h1>
         {loading && <p className="text-gray-600">Cargando libros...</p>}
         {error && <p className="text-red-600">{error}</p>}
-        {!loading && !error && (
+        {!loading && !error && books.length === 0 && (
+          <p className="text-gray-600">No hay libros disponibles</p>
+        )}
+        {!loading && !error && books.length > 0 && (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -43,7 +48,7 @@ const BookPage = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {books.map((book) => (
+              {books?.map((book) => (
                 <tr key={book._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">{book.title}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{book.author}</td>

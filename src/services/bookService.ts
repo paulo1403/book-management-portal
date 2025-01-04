@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_URL = "http://localhost:8000/api";
+import axiosInstance from "./axiosConfig";
 
 export interface Book {
   _id: string;
@@ -17,11 +15,17 @@ export interface Book {
 class BookService {
   async getBooks(): Promise<Book[]> {
     try {
-      const response = await axios.get(`${API_URL}/books/`);
+      console.log('Fetching books from:', `${axiosInstance.defaults.baseURL}/books/`);
+      const response = await axiosInstance.get("/books/");
+      console.log('Books response:', response.data);
+      if (!Array.isArray(response.data)) {
+        console.error("La respuesta no es un array:", response.data);
+        return [];
+      }
       return response.data;
     } catch (error) {
-      console.error('Error fetching books:', error);
-      throw error;
+      console.error("Error fetching books:", error);
+      return [];
     }
   }
 }
