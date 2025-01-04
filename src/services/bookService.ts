@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosConfig";
 
 export interface Book {
-  _id: string;
+  id: string;  // Cambiado de _id a id
   title: string;
   author: string;
   published_date: string;
