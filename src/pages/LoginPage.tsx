@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import authService from "../services/authService";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState<string>("");
 
   const formik = useFormik({
     initialValues: {
@@ -15,9 +17,16 @@ const LoginPage: React.FC = () => {
       email: Yup.string().email("Invalid email format").required("Required"),
       password: Yup.string().required("Required"),
     }),
-    onSubmit: (values) => {
-      console.log(values);
-      navigate("/books");
+    onSubmit: async (values) => {
+      try {
+        await authService.login({
+          email: values.email,
+          password: values.password,
+        });
+        navigate("/books");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      }
     },
   });
 
@@ -78,6 +87,20 @@ const LoginPage: React.FC = () => {
             >
               Login
             </button>
+          </div>
+          {error && (
+            <div className="text-red-500 text-sm text-center mt-2">
+              {error}
+            </div>
+          )}
+          <div className="text-sm text-center mt-4">
+            <span className="text-gray-600">Don't have an account? </span>
+            <a
+              href="/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Register here
+            </a>
           </div>
         </form>
       </div>

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-// import RegistrationPage from "./pages/RegistrationPage";
-// import BookPage from "./pages/BookPage";
+import RegisterPage from "./pages/RegisterPage";
+import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
 function App() {
@@ -9,8 +9,15 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        {/* <Route path="/register" element={<RegistrationPage />} />
-        <Route path="/books" element={<BookPage />} /> */}
+        <Route path="/register" element={<RegisterPage />} />
+        <Route 
+          path="/books" 
+          element={
+            <PrivateRoute>
+              {/* <BookPage /> */}
+            </PrivateRoute>
+          } 
+        />
       </Routes>
     </Router>
   );
