@@ -40,8 +40,7 @@ book-management-portal/
 │   ├── components/     # Componentes reutilizables
 │   ├── pages/         # Páginas de la aplicación 
 │   ├── services/      # Servicios y APIs
-│   ├── stores/        # Estados globales (Zustand)
-│   └── types/         # Definiciones de tipos
+│   └── stores/        # Estados globales (Zustand)
 ├── public/           # Archivos estáticos
 └── ...
 ```
